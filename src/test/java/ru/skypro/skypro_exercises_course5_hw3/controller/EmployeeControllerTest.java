@@ -10,12 +10,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.skypro.skypro_exercises_course5_hw3.dto.EmployeeDTO;
 import ru.skypro.skypro_exercises_course5_hw3.dto.EmployeeMapper;
 import ru.skypro.skypro_exercises_course5_hw3.repository.EmployeeRepository;
-import ru.skypro.skypro_exercises_course5_hw3.repository.PositionRepository;
-import ru.skypro.skypro_exercises_course5_hw3.service.EmployeeService;
 
 import java.util.List;
 
@@ -26,31 +29,33 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//@SpringBootTest(classes = SkyProExercisesCourse5Hw3Application.class)
 @SpringBootTest
+@Testcontainers
 @AutoConfigureMockMvc
 @WithMockUser
 class EmployeeControllerTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withUsername("postgres")
+            .withPassword("postgres");
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private EmployeeService employeeService;
-    @Autowired
     private EmployeeRepository employeeRepository;
-    @Autowired
-    private PositionRepository positionRepository;
+
     @Autowired
     private ObjectMapper objectMapper;
-
-//    Как заполнить репозиторий данными в начале тестов?
-//    @BeforeAll
-//    public static void initPositionTable(){
-//        List<Position> list = new ArrayList<>();
-//        for (int i = 0; i < 60; i++) {
-//            list.add(new Position(i,Integer.toString(i)));
-//        }
-//        positionRepository.saveAll(list);
-//    }
 
     @BeforeEach
     void cleanEmployeeTable() {
