@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.skypro</groupId>
-    <artifactId>SkyPro_exercises_course5_hw2</artifactId>
+    <artifactId>SkyPro_exercises_course5_hw3</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>SkyPro_exercises_course5_hw2</name>
-    <description>SkyPro_exercises_course5_hw2</description>
+    <name>SkyPro_exercises_course5_hw3</name>
+    <description>SkyPro_exercises_course5_hw3</description>
     <properties>
         <java.version>17</java.version>
     </properties>

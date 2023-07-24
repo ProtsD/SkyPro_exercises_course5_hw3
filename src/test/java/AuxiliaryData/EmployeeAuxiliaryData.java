@@ -2,8 +2,8 @@ package AuxiliaryData;
 
 import net.minidev.json.JSONObject;
 import org.json.JSONArray;
-import ru.skypro.skypro_exercises_course5_hw2.entity.Employee;
-import ru.skypro.skypro_exercises_course5_hw2.repository.EmployeeRepository;
+import ru.skypro.skypro_exercises_course5_hw3.entity.Employee;
+import ru.skypro.skypro_exercises_course5_hw3.repository.EmployeeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
