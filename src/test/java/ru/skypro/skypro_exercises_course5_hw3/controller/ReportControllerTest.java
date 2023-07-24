@@ -9,9 +9,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.skypro.skypro_exercises_course5_hw3.SkyProExercisesCourse5Hw3Application;
 import ru.skypro.skypro_exercises_course5_hw3.dto.EmployeeDTO;
 import ru.skypro.skypro_exercises_course5_hw3.dto.EmployeeMapper;
 import ru.skypro.skypro_exercises_course5_hw3.entity.Report;
@@ -28,9 +34,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Testcontainers
+
 @AutoConfigureMockMvc
 @WithMockUser
 class ReportControllerTest {
+    @Container
+    private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:13")
+            .withUsername("postgres")
+            .withPassword("postgres");
+
+    @DynamicPropertySource
+    static void postgresProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -86,7 +106,7 @@ class ReportControllerTest {
         assertThat(reportList).isNotEmpty();
 
 
-        MvcResult result = mockMvc.perform(get("/report/" + reportList.get(reportList.size()-1).getId()))
+        MvcResult result = mockMvc.perform(get("/report/" + reportList.get(reportList.size() - 1).getId()))
                 .andExpect(status().isOk())
                 .andReturn();
         byte[] reportByteCode = result.getResponse().getContentAsByteArray();
